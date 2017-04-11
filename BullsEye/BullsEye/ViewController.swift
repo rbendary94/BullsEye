@@ -52,14 +52,15 @@ class ViewController: UIViewController {
         //Else: title = Not even close
 
         var msg :String = ""
+        //100 - diff + bonus
         
         let difference = abs(Int(slider.value) - targetValue)
-        var temp = 0
+        var temp = abs(100 - difference)
         if difference == 0 {
-            temp = 100
+            temp += 100
             msg = "Perfect score!"
         }else if difference < 5 {
-            temp =  50
+            temp +=  50
             msg = "You almost had it!"
         }else if difference < 10 {
             msg = "Pretty good!"
