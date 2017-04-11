@@ -53,7 +53,7 @@ class ViewController: UIViewController {
 
         var msg :String = ""
         
-        let difference = Int(slider.value) - targetValue
+        let difference = abs(Int(slider.value) - targetValue)
         var temp = 0
         if difference == 0 {
             temp = 100
