@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  BullsEye
 //
-//  Created by Rana on 4/8/17.
-//  Copyright © 2017 Rana. All rights reserved.
+//  Created by yara mohamed on 4/9/17.
+//  Copyright © 2017 yara mohamediCode. All rights reserved.
 //
 
 import UIKit

@@ -2,104 +2,126 @@
 //  ViewController.swift
 //  BullsEye
 //
-//  Created by Rana on 4/8/17.
-//  Copyright © 2017 Rana. All rights reserved.
+//  Created by yara mohamed on 4/9/17.
+//  Copyright © 2017 yara mohamediCode. All rights reserved.
 //
 
 import UIKit
 
-class ViewController: UIViewController {
-
-    var currentValue :Int = 0
-    var score :Int = 0
-    var level :Int = 0
-    var targetValue :Int = 0
-
-    @IBOutlet var slider :UISlider!
-    @IBOutlet var targetLabel :UILabel!
-    @IBOutlet var scoreLabel :UILabel!
-    @IBOutlet var levelLabel :UILabel!
-    
-    
-    override func viewDidLoad() {
+class ViewController: UIViewController
+{
+    var currentValue : Int = 0
+    var targetValue : Int = 0
+    var totalScore : Int = 0
+    var round : Int = 0
+    var msg : String = ""
+    @IBOutlet var slider : UISlider!
+    @IBOutlet var targetScoreLabel : UILabel!
+    @IBOutlet var roundLabel : UILabel!
+    @IBOutlet var totalScoreLabel : UILabel!
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
-        
+        slider.setThumbImage(UIImage(named: "SliderThumb-Normal.png"), for: .normal)
+        slider.setThumbImage(UIImage(named: "SliderThumb-Highlighted.png"), for: .highlighted)
+        let leftTrackImage = UIImage(named: "SliderTrackLeft")
+        slider.setMinimumTrackImage(leftTrackImage?.resizableImage(withCapInsets: .init(top: 10, left: 10, bottom: 10, right: 10)), for: .normal)
+        slider.setMinimumTrackImage(leftTrackImage?.resizableImage(withCapInsets: .init(top: 10, left: 10, bottom: 10, right: 10)), for: .highlighted)
+        let rightTrackImage = UIImage(named: "SliderTrackRight")
+        slider.setMaximumTrackImage(rightTrackImage?.resizableImage(withCapInsets: .init(top: 10, left: 10, bottom: 10, right: 10)), for: .normal)
+        slider.setMaximumTrackImage(rightTrackImage?.resizableImage(withCapInsets: .init(top: 10, left: 10, bottom: 10, right: 10)), for: .highlighted)
         startNewRound()
-       
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-    
-    func startNewRound(){
-        scoreLabel.text = "\(score)"
-        levelLabel.text = "\(level)"
-        targetValue = 1 + Int(arc4random_uniform(100))
-        targetLabel.text = "\(targetValue)"
-        
-        currentValue = 50
-        slider.setValue(Float(currentValue), animated: false)
-        
+
     }
 
+
+    @IBAction func info(_ sender: Any)
+    {
+        let message = "Try to reach the target as much as you can then press Hit Me button !!! ... Simple but enjoyable game"
+        let alert = UIAlertController(title: "Bull's Eye", message: message, preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Awesome", style: .default, handler: nil)
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
-    @IBAction func showAlert(){
-        //if slider.value - targetvalue == 0 then add 100 to score & title = Perfect score
-        //if slider.value - targetvalue < 5 then add 50 to score & title = You almost had it!
-        //if slider.value - targetvalue < 10 then add nothing to score & title = Pretty good!
-        //Else: title = Not even close
-
-        var msg :String = ""
-        //100 - diff + bonus
+    @IBAction func ShowAlert(_ sender: Any)
+    {
+        let roundScore = calculateScore()
+        let message = "You scored \(roundScore) points \n Your value is: \(currentValue) \n Your target is: \(targetValue)"
+        let alert = UIAlertController(title: msg, message: message, preferredStyle: .alert)
         
-        let difference = abs(Int(slider.value) - targetValue)
-        var temp = abs(100 - difference)
-        if difference == 0 {
-            temp += 100
-            msg = "Perfect score!"
-        }else if difference < 5 {
-            temp +=  50
-            msg = "You almost had it!"
-        }else if difference < 10 {
-            msg = "Pretty good!"
-        }else{
-            msg = "Not even close"
-        }
-        score += temp
-        level += 1
-        
-        let alert = UIAlertController(title: msg, message: "You scored:  \(temp) points." + "\nYour value is: \(Int(slider.value))" + "\nThe target was: \(targetValue)" , preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+        let action = UIAlertAction(title: "Ok", style: .default, handler: { action in self.startNewRound()})
         
         alert.addAction(action)
+        present(alert, animated: true, completion: nil)
         
-        present(alert, animated: true, completion:  nil)
-        
-        startNewRound()
-
     }
-    
-    @IBAction func sliderMoved(_ slider: UISlider){
-        
-//        print("The Value of the slider is now \(slider.value)")
+
+    @IBAction func SliderMoved(_ slider: UISlider)
+    {
         currentValue = lroundf(slider.value)
-        slider.setValue(Float(currentValue), animated: false)
+    }
+    func update()
+    {
+        round+=1
+        targetScoreLabel.text = String(targetValue)
+        roundLabel.text = String(round)
+        totalScoreLabel.text = String(totalScore)
         
     }
     
-    
-    @IBAction func startOver(){
-        
-        score = 0
-        level = 0
+    @IBAction func reset(_ sender: Any)
+    {
+        round = 0
+        totalScore = 0
         startNewRound()
-        
     }
-    
-    
 
+    
+    func calculateScore() -> Int
+    {
+        var bonus : Int = 0
+        var diff : Int = 0
+        if(targetValue-currentValue==0)
+        {
+            bonus = 100
+            diff = 0
+            msg = "perfect!"
+            
+        }
+        else if(abs(targetValue-currentValue)<5)
+        {
+            bonus = 50
+            diff = abs(targetValue-currentValue)
+            msg = "You almost had it!"
+        }
+        else if(abs(targetValue-currentValue)<10)
+        {
+            bonus = 0
+            diff = abs(targetValue-currentValue)
+            msg = "Pretty good!"
+        }
+        else
+        {
+            bonus = 0
+            diff = abs(targetValue-currentValue)
+            msg = "Not even close..."
+        }
+        totalScore+=100+bonus-diff
+        return 100+bonus-diff
+    }
+    func startNewRound()
+    {
+        targetValue = 1 + Int(arc4random_uniform(100))
+        currentValue = 50
+        slider.value = Float(currentValue)
+        update()
+    }
 }
 
